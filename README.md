@@ -3,7 +3,7 @@
 ### Clone the project
 
 ```bash
-  git clone https://dredsoft-labs-admin@bitbucket.org/dredsoft-labs/ecommerce.git
+  git clone git@github.com:kellemNegasi/ecommerce.git
 ```
 
 ### Go to the project directory
