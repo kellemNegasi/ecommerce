@@ -6,6 +6,11 @@ import { useDispatch } from "react-redux";
 import { addCart } from "../redux/action";
 
 import { Footer, Navbar } from "../components";
+import { scoreProduct,explainScore } from "../utils/recommendation";
+
+
+
+
 
 const Product = () => {
   const { id } = useParams();
@@ -25,14 +30,27 @@ const Product = () => {
       setLoading(true);
       setLoading2(true);
       const response = await fetch(`https://fakestoreapi.com/products/${id}`);
-      const data = await response.json();
-      setProduct(data);
+      const selectedProduct  = await response.json();
+      setProduct(selectedProduct );
       setLoading(false);
-      const response2 = await fetch(
-        `https://fakestoreapi.com/products/category/${data.category}`
-      );
-      const data2 = await response2.json();
-      setSimilarProducts(data2);
+      // const response2 = await fetch(
+      //   `https://fakestoreapi.com/products/category/${data.category}`
+      // );
+
+
+      // Fetch all products for rule based filtering
+      const resAll = await fetch("https://fakestoreapi.com/products");
+      const data2 = await resAll.json();
+
+      const recommendations = data2.filter(p => p.id !== selectedProduct.id)
+      .map(p => ({
+         ...p, score: scoreProduct(p, selectedProduct), 
+         reason: explainScore(p, selectedProduct)
+        }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4);
+
+      setSimilarProducts(recommendations.slice(0, 6));
       setLoading2(false);
     };
     getProduct();
@@ -75,6 +93,11 @@ const Product = () => {
                 height="400px"
               />
             </div>
+
+            {/* <div className="card mt-4 p-3">
+              <h5>🛠️ Product Debug Info:</h5>
+              <pre>{JSON.stringify(product, null, 2)}</pre>
+            </div> */}
             <div className="col-md-6 col-md-6 py-5">
               <h4 className="text-uppercase text-muted">{product.category}</h4>
               <h1 className="display-5">{product.title}</h1>
@@ -142,6 +165,9 @@ const Product = () => {
                     <h5 className="card-title">
                       {item.title.substring(0, 15)}...
                     </h5>
+                    <p className="text-muted small" title={item.reason}>
+                      Why recommended?
+                    </p>
                   </div>
                   {/* <ul className="list-group list-group-flush">
                     <li className="list-group-item lead">${product.price}</li>

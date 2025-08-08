@@ -123,10 +123,14 @@ const Products = () => {
                 />
                 <div className="card-body">
                   <h5 className="card-title">
-                    {product.title.substring(0, 12)}...
+                    {product.title.substring(0, 20)}...
                   </h5>
+                  <p className="text-muted small text-uppercase mb-1">{product.category}</p>
                   <p className="card-text">
-                    {product.description.substring(0, 90)}...
+                    {product.description.substring(0, 80)}...
+                  </p>
+                  <p className="text-muted small">
+                    Rating: {product.rating?.rate || "N/A"} ★
                   </p>
                 </div>
                 <ul className="list-group list-group-flush">
